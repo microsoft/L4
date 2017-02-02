@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{20613061-35db-4d7c-bd00-9f4e5028851a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HashTable">
+      <UniqueIdentifier>{86f794bf-c3a7-4411-ac16-6f03db6f4fd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HashTable\Common">
+      <UniqueIdentifier>{3015db63-f25e-473b-bdb3-cf0e462bbcfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HashTable\ReadWrite">
+      <UniqueIdentifier>{33e0309f-d2e9-4789-8ec2-bd8387608db1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\detail">
+      <UniqueIdentifier>{8af60302-0ebf-44d4-91da-679d02f672be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HashTable\Cache">
+      <UniqueIdentifier>{28898d87-df1d-4f59-a7ca-97b2351cb9ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interprocess">
+      <UniqueIdentifier>{5fed4117-563f-4936-9cc4-1c4ecf0142a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interprocess\Container">
+      <UniqueIdentifier>{dac73a5f-5c8d-41a5-bcbf-a0d7dece543d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LocalMemory">
+      <UniqueIdentifier>{c2804a2e-9262-43e2-8747-75c6e5a48fe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Epoch">
+      <UniqueIdentifier>{d1777463-56d1-444e-91c3-c0f241e6fb42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Serialization">
+      <UniqueIdentifier>{334f9f94-d161-4501-826c-8c125fe0a2e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Log">
+      <UniqueIdentifier>{f37f4689-4ff8-48b6-b5ca-8c924fb1851a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\EpochActionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PerfLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MurmurHash3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\L4\Utils\AtomicOffsetPtr.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Math.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\ComparerHasher.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Containers.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\RunningThread.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Windows.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Properties.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Lock.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\ReadWrite\HashTable.h">
+      <Filter>Header Files\HashTable\ReadWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\ReadWrite\Serializer.h">
+      <Filter>Header Files\HashTable\ReadWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Common\SharedHashTable.h">
+      <Filter>Header Files\HashTable\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\detail\ToRawPointer.h">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Cache\HashTable.h">
+      <Filter>Header Files\HashTable\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Cache\Metadata.h">
+      <Filter>Header Files\HashTable\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Clock.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Common\Record.h">
+      <Filter>Header Files\HashTable\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Common\SettingAdapter.h">
+      <Filter>Header Files\HashTable\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Container\List.h">
+      <Filter>Header Files\Interprocess\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Container\String.h">
+      <Filter>Header Files\Interprocess\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Container\Vector.h">
+      <Filter>Header Files\Interprocess\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\MurmurHash3.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\LocalMemory\Context.h">
+      <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\LocalMemory\EpochManager.h">
+      <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\LocalMemory\HashTableManager.h">
+      <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\LocalMemory\HashTableService.h">
+      <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Epoch\EpochActionManager.h">
+      <Filter>Header Files\Epoch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Epoch\EpochQueue.h">
+      <Filter>Header Files\Epoch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Epoch\EpochRefPolicy.h">
+      <Filter>Header Files\Epoch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Epoch\IEpochActionManager.h">
+      <Filter>Header Files\Epoch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\IHashTable.h">
+      <Filter>Header Files\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Serialization\IStream.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Serialization\SerializerHelper.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Log\IPerfLogger.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Log\PerfCounter.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Log\PerfLogger.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\HashTable\Config.h">
+      <Filter>Header Files\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Epoch\Config.h">
+      <Filter>Header Files\Epoch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Utils\Exception.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
