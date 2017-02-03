@@ -61,12 +61,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Context.h" />
-    <ClInclude Include="EpochManager.h" />
-    <ClInclude Include="HashTableManager.h" />
-    <ClInclude Include="HashTableService.h" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
