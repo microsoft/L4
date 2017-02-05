@@ -1,14 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <iosfwd>
 #include "Log/PerfCounter.h"
-#include "Serialization/IStream.h"
 #include "Utils/Properties.h"
-
 
 namespace L4
 {
-
 
 // IReadOnlyHashTable interface for read-only access to the hash table.
 struct IReadOnlyHashTable
@@ -57,7 +55,6 @@ struct IReadOnlyHashTable
     virtual const HashTablePerfData& GetPerfData() const = 0;
 };
 
-
 // IReadOnlyHashTable::IIterator interface for the hash table iterator.
 struct IReadOnlyHashTable::IIterator
 {
@@ -71,7 +68,6 @@ struct IReadOnlyHashTable::IIterator
 
     virtual Value GetValue() const = 0;
 };
-
 
 // IWritableHashTable interface for write access to the hash table.
 struct IWritableHashTable : public virtual IReadOnlyHashTable
@@ -87,16 +83,14 @@ struct IWritableHashTable : public virtual IReadOnlyHashTable
     virtual ISerializerPtr GetSerializer() const = 0;
 };
 
-
 // IWritableHashTable::ISerializer interface for serializing hash table.
 struct IWritableHashTable::ISerializer
 {
     virtual ~ISerializer() = default;
 
     virtual void Serialize(
-        IStreamWriter& writer,
+        std::ostream& stream,
         const Utils::Properties& properties) = 0;
 };
-
 
 } // namespace L4

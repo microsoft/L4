@@ -4,7 +4,7 @@
 
 namespace L4
 {
-namespace LocalMemory
+namespace UnitTests
 {
 
 void CheckMinCounters(const HashTablePerfData& htPerfData)
@@ -100,5 +100,5 @@ BOOST_AUTO_TEST_CASE(PerfDataTest)
     }
 }
 
-} // namespace LocalMemory
+} // namespace UnitTests
 } // namespace L4

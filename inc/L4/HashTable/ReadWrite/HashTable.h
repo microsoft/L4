@@ -10,7 +10,6 @@
 #include "HashTable/IHashTable.h"
 #include "HashTable/ReadWrite/Serializer.h"
 #include "Log/PerfCounter.h"
-#include "Serialization/IStream.h"
 #include "Utils/Exception.h"
 #include "Utils/MurmurHash3.h"
 #include "Utils/Properties.h"
@@ -563,10 +562,10 @@ public:
     Serializer& operator=(const Serializer&) = delete;
 
     void Serialize(
-        IStreamWriter& writer,
+        std::ostream& stream,
         const Utils::Properties& /* properties */) override
     {
-        ReadWrite::Serializer<HashTable>{}.Serialize(m_hashTable, writer);
+        ReadWrite::Serializer<HashTable>{}.Serialize(m_hashTable, stream);
     }
 
 private:

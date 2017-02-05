@@ -2,9 +2,9 @@
 
 #include <cstdint>
 #include <boost/format.hpp>
+#include <iosfwd>
 #include "Epoch/IEpochActionManager.h"
 #include "Log/PerfCounter.h"
-#include "Serialization/IStream.h"
 #include "Serialization/SerializerHelper.h"
 #include "Utils/Exception.h"
 #include "Utils/Properties.h"
@@ -26,11 +26,7 @@ struct ISerializer
 {
     virtual ~ISerializer() = default;
 
-    // Assumes writer has not been started yet, thus the serializer is responsible
-    // for calling Begin() and End()on the writer.
-    virtual void Serialize(
-        HashTable& hashTable,
-        IStreamWriter& writer) const = 0;
+    virtual void Serialize(HashTable& hashTable, std::ostream& stream) const = 0;
 };
 
 // Interface for a deserializer for the given Memory and HashTable type.
@@ -39,11 +35,10 @@ struct IDeserializer
 {
     virtual ~IDeserializer() = default;
 
-    // Assumes that reader.Begin() has already been called and the version info has been read.
-    // The serializer should call reader.End() before Deserialize() returns.
+    // Assumes that the version info has been read from the stream
     virtual typename Memory::template UniquePtr<HashTable> Deserialize(
         Memory& memory,
-        IStreamReader& reader) const = 0;
+        std::istream& stream) const = 0;
 };
 
 
@@ -57,12 +52,11 @@ namespace Deprecated
 namespace Current
 {
 
-
-constexpr std::uint8_t c_version = 3U;
+constexpr std::uint8_t c_version = 1U;
 
 // Current serializer used for serializing hash tables.
 // The serialization format of Serializer is:
-// <Version Id = 3> <Hash table settings> followed by
+// <Version Id = 1> <Hash table settings> followed by
 // If the next byte is set to 1:
 //     <Key size> <Key bytes> <Value size> <Value bytes>
 // Otherwise, end of the records.
@@ -77,14 +71,12 @@ public:
 
     void Serialize(
         HashTable& hashTable,
-        IStreamWriter& writer) const override
+        std::ostream& stream) const override
     {
-        writer.Begin();
-
         auto& perfData = hashTable.m_perfData;
         perfData.Set(HashTablePerfCounter::RecordsCountSavedFromSerializer, 0);
 
-        SerializerHelper helper(writer);
+        SerializerHelper helper(stream);
 
         helper.Serialize(c_version);
 
@@ -112,8 +104,6 @@ public:
 
         // Flush perf counter so that the values are up to date when GetPerfData() is called.
         std::atomic_thread_fence(std::memory_order_release);
-
-        writer.End();
     }
 };
 
@@ -130,9 +120,9 @@ public:
 
     typename Memory::template UniquePtr<HashTable> Deserialize(
         Memory& memory,
-        IStreamReader& reader) const override
+        std::istream& stream) const override
     {
-        DeserializerHelper helper(reader);
+        DeserializerHelper helper(stream);
 
         HashTable::Setting setting;
         helper.Deserialize(setting);
@@ -182,8 +172,6 @@ public:
         // Flush perf counter so that the values are up to date when GetPerfData() is called.
         std::atomic_thread_fence(std::memory_order_release);
 
-        reader.End();
-
         return hashTable;
     }
 
@@ -204,7 +192,6 @@ private:
     };
 };
 
-
 } // namespace Current
 
 
@@ -218,11 +205,9 @@ public:
     Serializer(const Serializer&) = delete;
     Serializer& operator=(const Serializer&) = delete;
 
-    void Serialize(
-        HashTable& hashTable,
-        IStreamWriter& writer) const
+    void Serialize(HashTable& hashTable, std::ostream& stream) const
     {
-        Current::Serializer<HashTable>{}.Serialize(hashTable, writer);
+        Current::Serializer<HashTable>{}.Serialize(hashTable, stream);
     }
 };
 
@@ -240,17 +225,15 @@ public:
 
     typename Memory::template UniquePtr<HashTable> Deserialize(
         Memory& memory,
-        IStreamReader& reader) const
+        std::istream& stream) const
     {
-        reader.Begin();
-
         std::uint8_t version = 0U;
-        reader.Read(reinterpret_cast<std::uint8_t*>(&version), sizeof(version));
+        DeserializerHelper(stream).Deserialize(version);
 
         switch (version)
         {
         case Current::c_version:
-            return Current::Deserializer<Memory, HashTable>{ m_properties }.Deserialize(memory, reader);
+            return Current::Deserializer<Memory, HashTable>{ m_properties }.Deserialize(memory, stream);
         default:
             boost::format err("Unsupported version '%1%' is given.");
             err % version;

@@ -79,7 +79,6 @@
     <ClInclude Include="..\inc\L4\Log\IPerfLogger.h" />
     <ClInclude Include="..\inc\L4\Log\PerfCounter.h" />
     <ClInclude Include="..\inc\L4\Log\PerfLogger.h" />
-    <ClInclude Include="..\inc\L4\Serialization\IStream.h" />
     <ClInclude Include="..\inc\L4\Serialization\SerializerHelper.h" />
     <ClInclude Include="..\inc\L4\Utils\Clock.h" />
     <ClInclude Include="..\inc\L4\Utils\Exception.h" />
