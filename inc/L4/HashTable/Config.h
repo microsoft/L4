@@ -6,7 +6,6 @@
 #include <chrono>
 #include <memory>
 #include "HashTable/IHashTable.h"
-#include "Serialization/IStream.h"
 #include "Utils/Properties.h"
 
 namespace L4
@@ -58,13 +57,13 @@ struct HashTableConfig
         using Properties = Utils::Properties;
 
         Serializer(
-            std::shared_ptr<IStreamReader> streamReader = {},
+            std::shared_ptr<std::istream> streamReader = {},
             boost::optional<Properties> properties = {})
             : m_streamReader{ streamReader }
             , m_properties{ properties }
         {}
 
-        std::shared_ptr<IStreamReader> m_streamReader;
+        std::shared_ptr<std::istream> m_streamReader;
         boost::optional<Properties> m_properties;
     };
 

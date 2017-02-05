@@ -4,6 +4,7 @@
 #include "L4/HashTable/ReadWrite/HashTable.h"
 #include "L4/HashTable/ReadWrite/Serializer.h"
 #include "L4/Log/PerfCounter.h"
+#include <boost/iostreams/stream.hpp>
 #include <string>
 #include <vector>
 
@@ -92,21 +93,21 @@ void ValidateSerializer(
     Utils::ValidateCounters(perfData, expectedCounterValuesAfterLoad);
 
     // Now write the hash table to the stream.
-    MockStreamWriter writer;
-    BOOST_CHECK(!writer.IsValid());
-    serializer.Serialize(*hashTableHolder, writer);
-    BOOST_CHECK(writer.IsValid());
+    std::stringstream outStream;
+    serializer.Serialize(*hashTableHolder, outStream);
     Utils::ValidateCounters(perfData, expectedCounterValuesAfterSerialization);
 
     // Read in the hash table from the stream and validate it.
-    MockStreamReader reader(writer.GetStreamBuffer());
+    auto outStreamStr = outStream.str();
+    boost::iostreams::stream<boost::iostreams::array_source> inStream(
+        outStreamStr.c_str(),
+        outStreamStr.size());
 
     // version == 0 means that it's run through the HashTableSerializer, thus the following can be skipped.
     if (serializerVersion != 0)
     {
         std::uint8_t actualSerializerVersion = 0;
-        reader.Begin();
-        reader.Read(&actualSerializerVersion, sizeof(actualSerializerVersion));
+        DeserializerHelper(inStream).Deserialize(actualSerializerVersion);
         BOOST_CHECK(actualSerializerVersion == serializerVersion);
     }
     else
@@ -114,11 +115,7 @@ void ValidateSerializer(
         BOOST_REQUIRE(typeid(L4::HashTable::ReadWrite::Serializer<HashTable>) == typeid(Serializer));
     }
 
-    BOOST_CHECK(!reader.IsValid());
-
-    auto newHashTableHolder = deserializer.Deserialize(memory, reader);
-
-    BOOST_CHECK(reader.IsValid());
+    auto newHashTableHolder = deserializer.Deserialize(memory, inStream);
     BOOST_CHECK(newHashTableHolder != nullptr);
 
     WritableHashTable<Allocator> newWritableHashTable(*newHashTableHolder, epochManager);

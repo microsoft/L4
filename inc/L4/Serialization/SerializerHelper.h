@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "IStream.h"
+#include <iosfwd>
 
 namespace L4
 {
@@ -10,8 +10,8 @@ namespace L4
 class SerializerHelper
 {
 public:
-    SerializerHelper(IStreamWriter& writer)
-        : m_writer(writer)
+    SerializerHelper(std::ostream& stream)
+        : m_stream{ stream }
     {}
 
     SerializerHelper(const SerializerHelper&) = delete;
@@ -20,16 +20,16 @@ public:
     template <typename T>
     void Serialize(const T& obj)
     {
-        m_writer.Write(reinterpret_cast<const std::uint8_t*>(&obj), sizeof(obj));
+        m_stream.write(reinterpret_cast<const char*>(&obj), sizeof(obj));
     }
 
     void Serialize(const void* data, std::uint32_t dataSize)
     {
-        m_writer.Write(static_cast<const std::uint8_t*>(data), dataSize);
+        m_stream.write(static_cast<const char*>(data), dataSize);
     }
 
 private:
-    IStreamWriter& m_writer;
+    std::ostream& m_stream;
 };
 
 
@@ -37,10 +37,9 @@ private:
 class DeserializerHelper
 {
 public:
-    DeserializerHelper(IStreamReader& reader)
-        : m_reader(reader)
-    {
-    }
+    DeserializerHelper(std::istream& stream)
+        : m_stream{ stream }
+    {}
 
     DeserializerHelper(const DeserializerHelper&) = delete;
     DeserializerHelper& operator=(const DeserializerHelper&) = delete;
@@ -48,16 +47,16 @@ public:
     template <typename T>
     void Deserialize(T& obj)
     {
-        m_reader.Read(reinterpret_cast<std::uint8_t*>(&obj), sizeof(obj));
+        m_stream.read(reinterpret_cast<char*>(&obj), sizeof(obj));
     }
 
     void Deserialize(void* data, std::uint32_t dataSize)
     {
-        m_reader.Read(static_cast<std::uint8_t*>(data), dataSize);
+        m_stream.read(static_cast<char*>(data), dataSize);
     }
 
 private:
-    IStreamReader& m_reader;
+    std::istream& m_stream;
 };
 
 

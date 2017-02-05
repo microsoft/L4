@@ -148,9 +148,6 @@
     <ClInclude Include="..\inc\L4\HashTable\IHashTable.h">
       <Filter>Header Files\HashTable</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\L4\Serialization\IStream.h">
-      <Filter>Header Files\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\L4\Serialization\SerializerHelper.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
