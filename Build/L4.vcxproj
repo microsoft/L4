@@ -76,6 +76,7 @@
     <ClInclude Include="..\inc\L4\LocalMemory\EpochManager.h" />
     <ClInclude Include="..\inc\L4\LocalMemory\HashTableManager.h" />
     <ClInclude Include="..\inc\L4\LocalMemory\HashTableService.h" />
+    <ClInclude Include="..\inc\L4\LocalMemory\Memory.h" />
     <ClInclude Include="..\inc\L4\Log\IPerfLogger.h" />
     <ClInclude Include="..\inc\L4\Log\PerfCounter.h" />
     <ClInclude Include="..\inc\L4\Log\PerfLogger.h" />

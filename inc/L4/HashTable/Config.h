@@ -57,13 +57,13 @@ struct HashTableConfig
         using Properties = Utils::Properties;
 
         Serializer(
-            std::shared_ptr<std::istream> streamReader = {},
+            std::shared_ptr<std::istream> stream = {},
             boost::optional<Properties> properties = {})
-            : m_streamReader{ streamReader }
+            : m_stream{ stream }
             , m_properties{ properties }
         {}
 
-        std::shared_ptr<std::istream> m_streamReader;
+        std::shared_ptr<std::istream> m_stream;
         boost::optional<Properties> m_properties;
     };
 
@@ -78,7 +78,7 @@ struct HashTableConfig
         , m_serializer{ serializer }
     {
         assert(m_setting.m_numBuckets > 0U
-            || (m_serializer && (serializer->m_streamReader != nullptr)));
+            || (m_serializer && (serializer->m_stream != nullptr)));
     }
 
     std::string m_name;

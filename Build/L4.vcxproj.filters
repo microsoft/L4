@@ -169,6 +169,9 @@
     <ClInclude Include="..\inc\L4\Utils\Exception.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\L4\LocalMemory\Memory.h">
+      <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
