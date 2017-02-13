@@ -3,9 +3,11 @@
 #include <boost/any.hpp>
 #include <memory>
 #include <vector>
+#include "LocalMemory/Memory.h"
 #include "Epoch/IEpochActionManager.h"
 #include "HashTable/Config.h"
 #include "HashTable/ReadWrite/HashTable.h"
+#include "HashTable/ReadWrite/Serializer.h"
 #include "HashTable/Cache/HashTable.h"
 #include "Utils/Containers.h"
 #include "Utils/Exception.h"
@@ -29,21 +31,36 @@ public:
             throw RuntimeException("Same hash table name already exists.");
         }
 
+        const auto& cacheConfig = config.m_cache;
+        const auto& serializerConfig = config.m_serializer;
+
+        if (cacheConfig && serializerConfig)
+        {
+            throw RuntimeException(
+                "Constructing cache hash table via serializer is not supported.");
+        }
+
         using namespace HashTable;
 
         using InternalHashTable = ReadWrite::WritableHashTable<Allocator>::HashTable;
+        using Memory = LocalMemory::Memory<Allocator>;
 
-        auto internalHashTable = std::make_shared<InternalHashTable>(
-            InternalHashTable::Setting{
-                config.m_setting.m_numBuckets,
-                (std::max)(config.m_setting.m_numBucketsPerMutex.get_value_or(1U), 1U),
-                config.m_setting.m_fixedKeySize.get_value_or(0U),
-                config.m_setting.m_fixedValueSize.get_value_or(0U) },
-            allocator);
+        Memory memory{ allocator };
 
-        // TODO: Create from a serializer.
+        std::shared_ptr<InternalHashTable> internalHashTable = (serializerConfig && serializerConfig->m_stream != nullptr)
+            ? ReadWrite::Deserializer<Memory, InternalHashTable>(
+                serializerConfig->m_properties.get_value_or(HashTableConfig::Serializer::Properties())).
+                Deserialize(
+                    memory,
+                    *(serializerConfig->m_stream))
+            : memory.MakeUnique<InternalHashTable>(
+                InternalHashTable::Setting{
+                    config.m_setting.m_numBuckets,
+                    (std::max)(config.m_setting.m_numBucketsPerMutex.get_value_or(1U), 1U),
+                    config.m_setting.m_fixedKeySize.get_value_or(0U),
+                    config.m_setting.m_fixedValueSize.get_value_or(0U) },
+                memory.GetAllocator());
 
-        const auto& cacheConfig = config.m_cache;
         auto hashTable = 
             cacheConfig
             ? std::make_unique<Cache::WritableHashTable<Allocator>>(

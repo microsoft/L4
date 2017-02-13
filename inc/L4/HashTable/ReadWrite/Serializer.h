@@ -133,7 +133,7 @@ public:
 
         EpochActionManager epochActionManager;
 
-        using Allocator = typename Memory:: template Allocator<>;
+        using Allocator = typename Memory::Allocator;
 
         WritableHashTable<Allocator> writableHashTable(
             *hashTable,

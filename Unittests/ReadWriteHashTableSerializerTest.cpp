@@ -4,8 +4,9 @@
 #include "L4/HashTable/ReadWrite/HashTable.h"
 #include "L4/HashTable/ReadWrite/Serializer.h"
 #include "L4/Log/PerfCounter.h"
-#include <boost/iostreams/stream.hpp>
+#include "L4/LocalMemory/Memory.h"
 #include <string>
+#include <sstream>
 #include <vector>
 
 namespace L4
@@ -13,50 +14,14 @@ namespace L4
 namespace UnitTests
 {
 
-class LocalMemory
-{
-public:
-    template <typename T = void>
-    using Allocator = typename std::allocator<T>;
-
-    template <typename T>
-    using Deleter = typename std::default_delete<T>;
-
-    template <typename T>
-    using UniquePtr = std::unique_ptr<T>;
-
-    LocalMemory() = default;
-
-    template <typename T, typename... Args>
-    auto MakeUnique(Args&&... args)
-    {
-        return std::make_unique<T>(std::forward<Args>(args)...);
-    }
-
-    template <typename T = void>
-    auto GetAllocator()
-    {
-        return Allocator<T>();
-    }
-
-    template <typename T>
-    auto GetDeleter()
-    {
-        return Deleter<T>();
-    }
-
-    LocalMemory(const LocalMemory&) = delete;
-    LocalMemory& operator=(const LocalMemory&) = delete;
-};
-
 using namespace HashTable::ReadWrite;
 
 BOOST_AUTO_TEST_SUITE(HashTableSerializerTests)
 
 using KeyValuePair = std::pair<std::string, std::string>;
 using KeyValuePairs = std::vector<KeyValuePair>;
-using Memory = LocalMemory;
-using Allocator = typename Memory:: template Allocator<>;
+using Memory = LocalMemory::Memory<std::allocator<void>>;
+using Allocator = typename Memory::Allocator;
 using HashTable = WritableHashTable<Allocator>::HashTable;
 
 template <typename Serializer, typename Deserializer>
@@ -69,7 +34,7 @@ void ValidateSerializer(
     const Utils::ExpectedCounterValues& expectedCounterValuesAfterSerialization,
     const Utils::ExpectedCounterValues& expectedCounterValuesAfterDeserialization)
 {
-    LocalMemory memory;
+    Memory memory;
     MockEpochManager epochManager;
 
     auto hashTableHolder{
@@ -93,15 +58,12 @@ void ValidateSerializer(
     Utils::ValidateCounters(perfData, expectedCounterValuesAfterLoad);
 
     // Now write the hash table to the stream.
-    std::stringstream outStream;
+    std::ostringstream outStream;
     serializer.Serialize(*hashTableHolder, outStream);
     Utils::ValidateCounters(perfData, expectedCounterValuesAfterSerialization);
 
     // Read in the hash table from the stream and validate it.
-    auto outStreamStr = outStream.str();
-    boost::iostreams::stream<boost::iostreams::array_source> inStream(
-        outStreamStr.c_str(),
-        outStreamStr.size());
+    std::istringstream inStream(outStream.str());
 
     // version == 0 means that it's run through the HashTableSerializer, thus the following can be skipped.
     if (serializerVersion != 0)
