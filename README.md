@@ -1,7 +1,7 @@
 # L4 HashTable
 L4 (Lock-Free on Read) Hashtable is a C++ library that provides a fixed-size hashtable, where keys and values are arbitrary bytes.
 
-L4 HashTable is optimized for lookup operations. It uses [Epoch Queue](https://github.com/Microsoft/L4/wiki/Epoch-Queue) (deterministic garbage collector) to achieve lock-free lookup opeartions.
+L4 HashTable is optimized for lookup operations. It uses [Epoch Queue](https://github.com/Microsoft/L4/wiki/Epoch-Queue) (deterministic garbage collector) to achieve lock-free lookup operations.
 
 L4 HashTable supports caching based on memory size and time. It uses [Clock](https://en.wikipedia.org/wiki/Page_replacement_algorithm#Clock) algorithm for an efficient cache eviction.
 
@@ -17,7 +17,7 @@ Support for other platforms is under consideration.
 ## Getting Started
 Start with a simple [example](https://github.com/Microsoft/L4/blob/master/Examples/main.cpp).
 
-Developer wiki is on the way!
+Check out the [wiki](https://github.com/Microsoft/L4/wiki).
 
 ## Contributing
 
