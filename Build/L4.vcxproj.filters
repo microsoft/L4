@@ -45,6 +45,12 @@
     <Filter Include="Header Files\Log">
       <UniqueIdentifier>{f37f4689-4ff8-48b6-b5ca-8c924fb1851a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Interprocess\Connection">
+      <UniqueIdentifier>{f1f26243-80cc-43d9-8d9e-0145bca17a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Connection">
+      <UniqueIdentifier>{d741bc4b-5912-41f0-993c-a0c458fabf63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\EpochActionManager.cpp">
@@ -55,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="..\src\MurmurHash3.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Connection\EndPointInfoUtils.cpp">
+      <Filter>Source Files\Connection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +180,12 @@
     </ClInclude>
     <ClInclude Include="..\inc\L4\LocalMemory\Memory.h">
       <Filter>Header Files\LocalMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Connection\EndPointInfo.h">
+      <Filter>Header Files\Interprocess\Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Connection\EndPointInfoUtils.h">
+      <Filter>Header Files\Interprocess\Connection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
