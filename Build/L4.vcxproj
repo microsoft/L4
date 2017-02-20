@@ -49,8 +49,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Connection\EndPointInfoUtils.cpp" />
     <ClCompile Include="..\src\EpochActionManager.cpp" />
+    <ClCompile Include="..\src\Interprocess\Connection\ConnectionMonitor.cpp" />
+    <ClCompile Include="..\src\Interprocess\Connection\EndPointInfoUtils.cpp" />
+    <ClCompile Include="..\src\Interprocess\Utils\Handle.cpp" />
     <ClCompile Include="..\src\MurmurHash3.cpp" />
     <ClCompile Include="..\src\PerfLogger.cpp" />
   </ItemGroup>
@@ -70,11 +72,13 @@
     <ClInclude Include="..\inc\L4\HashTable\IHashTable.h" />
     <ClInclude Include="..\inc\L4\HashTable\ReadWrite\HashTable.h" />
     <ClInclude Include="..\inc\L4\HashTable\ReadWrite\Serializer.h" />
+    <ClInclude Include="..\inc\L4\Interprocess\Connection\ConnectionMonitor.h" />
     <ClInclude Include="..\inc\L4\Interprocess\Connection\EndPointInfo.h" />
     <ClInclude Include="..\inc\L4\Interprocess\Connection\EndPointInfoUtils.h" />
     <ClInclude Include="..\inc\L4\Interprocess\Container\List.h" />
     <ClInclude Include="..\inc\L4\Interprocess\Container\String.h" />
     <ClInclude Include="..\inc\L4\Interprocess\Container\Vector.h" />
+    <ClInclude Include="..\inc\L4\Interprocess\Utils\Handle.h" />
     <ClInclude Include="..\inc\L4\LocalMemory\Context.h" />
     <ClInclude Include="..\inc\L4\LocalMemory\EpochManager.h" />
     <ClInclude Include="..\inc\L4\LocalMemory\HashTableManager.h" />

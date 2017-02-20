@@ -48,8 +48,17 @@
     <Filter Include="Header Files\Interprocess\Connection">
       <UniqueIdentifier>{f1f26243-80cc-43d9-8d9e-0145bca17a81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Connection">
+    <Filter Include="Header Files\Interprocess\Utils">
+      <UniqueIdentifier>{dec96bc3-321a-490a-b26e-5f6f23ea390d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interprocess">
+      <UniqueIdentifier>{fe06d43a-bba1-4175-b1e4-dffc6ef3ecdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interprocess\Connection">
       <UniqueIdentifier>{d741bc4b-5912-41f0-993c-a0c458fabf63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interprocess\Utils">
+      <UniqueIdentifier>{b35510fd-1b6a-4996-84d1-5dc934c4d1aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,8 +71,14 @@
     <ClCompile Include="..\src\MurmurHash3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Connection\EndPointInfoUtils.cpp">
-      <Filter>Source Files\Connection</Filter>
+    <ClCompile Include="..\src\Interprocess\Connection\EndPointInfoUtils.cpp">
+      <Filter>Source Files\Interprocess\Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Interprocess\Utils\Handle.cpp">
+      <Filter>Source Files\Interprocess\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Interprocess\Connection\ConnectionMonitor.cpp">
+      <Filter>Source Files\Interprocess\Connection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +201,12 @@
     </ClInclude>
     <ClInclude Include="..\inc\L4\Interprocess\Connection\EndPointInfoUtils.h">
       <Filter>Header Files\Interprocess\Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Connection\ConnectionMonitor.h">
+      <Filter>Header Files\Interprocess\Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\L4\Interprocess\Utils\Handle.h">
+      <Filter>Header Files\Interprocess\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
