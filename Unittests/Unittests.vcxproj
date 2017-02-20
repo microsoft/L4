@@ -51,6 +51,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CacheHashTableTest.cpp" />
+    <ClCompile Include="ConnectionMonitorTest.cpp" />
     <ClCompile Include="EpochManagerTest.cpp" />
     <ClCompile Include="HashTableManagerTest.cpp" />
     <ClCompile Include="HashTableRecordTest.cpp" />
