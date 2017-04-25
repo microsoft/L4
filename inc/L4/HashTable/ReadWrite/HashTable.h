@@ -565,7 +565,8 @@ public:
         std::ostream& stream,
         const Utils::Properties& /* properties */) override
     {
-        ReadWrite::Serializer<HashTable>{}.Serialize(m_hashTable, stream);
+        ReadWrite::Serializer<
+            HashTable, ReadWrite::ReadOnlyHashTable>{}.Serialize(m_hashTable, stream);
     }
 
 private:

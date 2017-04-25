@@ -48,7 +48,7 @@ public:
         Memory memory{ allocator };
 
         std::shared_ptr<InternalHashTable> internalHashTable = (serializerConfig && serializerConfig->m_stream != nullptr)
-            ? ReadWrite::Deserializer<Memory, InternalHashTable>(
+            ? ReadWrite::Deserializer<Memory, InternalHashTable, ReadWrite::WritableHashTable>(
                 serializerConfig->m_properties.get_value_or(HashTableConfig::Serializer::Properties())).
                 Deserialize(
                     memory,

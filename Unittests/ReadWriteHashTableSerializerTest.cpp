@@ -74,7 +74,7 @@ void ValidateSerializer(
     }
     else
     {
-        BOOST_REQUIRE(typeid(L4::HashTable::ReadWrite::Serializer<HashTable>) == typeid(Serializer));
+        BOOST_REQUIRE(typeid(L4::HashTable::ReadWrite::Serializer<HashTable, ReadOnlyHashTable>) == typeid(Serializer));
     }
 
     auto newHashTableHolder = deserializer.Deserialize(memory, inStream);
@@ -100,8 +100,8 @@ void ValidateSerializer(
 BOOST_AUTO_TEST_CASE(CurrentSerializerTest)
 {
     ValidateSerializer(
-        Current::Serializer<HashTable>{},
-        Current::Deserializer<Memory, HashTable>{ L4::Utils::Properties{} },
+        Current::Serializer<HashTable, ReadOnlyHashTable>{},
+        Current::Deserializer<Memory, HashTable, WritableHashTable>{ L4::Utils::Properties{} },
         Current::c_version,
         {
             { "hello1", " world1" },
@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(HashTableSerializeTest)
 {
     // This test case tests end to end scenario using the HashTableSerializer.
     ValidateSerializer(
-        Serializer<HashTable>{},
-        Deserializer<Memory, HashTable>{ L4::Utils::Properties{} },
+        Serializer<HashTable, ReadOnlyHashTable>{},
+        Deserializer<Memory, HashTable, WritableHashTable>{ L4::Utils::Properties{} },
         0U,
         {
             { "hello1", " world1" },
