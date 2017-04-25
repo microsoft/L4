@@ -30,17 +30,14 @@ struct Record
 
 
 // RecordBuffer is a thin wrapper struct around a raw buffer array (pointer).
-// The warning is "nonstandard extension used : zero-sized array in struct/union."
-#pragma warning (push)
-#pragma warning (disable:4200) 
-
 struct RecordBuffer
 {
-    std::uint8_t m_buffer[];
+    std::uint8_t m_buffer[1];
 };
 
-#pragma warning (pop)
-
+static_assert(
+    sizeof(RecordBuffer) == 1,
+    "RecordBuffer size should be 1 to be a thin wrapper.");
 
 // RecordSerializer provides a functionality to serialize/deserialize a record information.
 class RecordSerializer
