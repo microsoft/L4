@@ -20,27 +20,6 @@ namespace ReadWrite
 // HashTable::ReadWrite::ReadOnlyHashTable<Allocator>::HashTable.
 // However, due to the cyclic dependency, it needs to be passed as a template type.
 
-// Interface for a serializer for the given HashTable type.
-template <typename HashTable>
-struct ISerializer
-{
-    virtual ~ISerializer() = default;
-
-    virtual void Serialize(HashTable& hashTable, std::ostream& stream) const = 0;
-};
-
-// Interface for a deserializer for the given Memory and HashTable type.
-template <typename Memory, typename HashTable>
-struct IDeserializer
-{
-    virtual ~IDeserializer() = default;
-
-    // Assumes that the version info has been read from the stream
-    virtual typename Memory::template UniquePtr<HashTable> Deserialize(
-        Memory& memory,
-        std::istream& stream) const = 0;
-};
-
 
 // All the deprecated (previous versions) serializer should be put inside the Deprecated namespace.
 // Removing any of the Deprecated serializers from the source code will require the major package version change.
@@ -60,8 +39,8 @@ constexpr std::uint8_t c_version = 1U;
 // If the next byte is set to 1:
 //     <Key size> <Key bytes> <Value size> <Value bytes>
 // Otherwise, end of the records.
-template <typename HashTable>
-class Serializer : public ISerializer<HashTable>
+template <typename HashTable, template <typename> class ReadOnlyHashTable>
+class Serializer
 {
 public:
     Serializer() = default;
@@ -71,7 +50,7 @@ public:
 
     void Serialize(
         HashTable& hashTable,
-        std::ostream& stream) const override
+        std::ostream& stream) const
     {
         auto& perfData = hashTable.m_perfData;
         perfData.Set(HashTablePerfCounter::RecordsCountSavedFromSerializer, 0);
@@ -82,7 +61,7 @@ public:
 
         helper.Serialize(&hashTable.m_setting, sizeof(hashTable.m_setting));
 
-        ReadOnlyHashTable<HashTable::Allocator> readOnlyHashTable(hashTable);
+        ReadOnlyHashTable<typename HashTable::Allocator> readOnlyHashTable(hashTable);
 
         auto iterator = readOnlyHashTable.GetIterator();
         while (iterator->MoveNext())
@@ -108,8 +87,8 @@ public:
 };
 
 // Current Deserializer used for deserializing hash tables.
-template <typename Memory, typename HashTable>
-class Deserializer : public IDeserializer<Memory, HashTable>
+template <typename Memory, typename HashTable, template <typename> class WritableHashTable>
+class Deserializer
 {
 public:
     explicit Deserializer(const Utils::Properties& /* properties */)
@@ -120,7 +99,7 @@ public:
 
     typename Memory::template UniquePtr<HashTable> Deserialize(
         Memory& memory,
-        std::istream& stream) const override
+        std::istream& stream) const
     {
         DeserializerHelper helper(stream);
 
@@ -133,9 +112,7 @@ public:
 
         EpochActionManager epochActionManager;
 
-        using Allocator = typename Memory::Allocator;
-
-        WritableHashTable<Allocator> writableHashTable(
+        WritableHashTable<typename HashTable::Allocator> writableHashTable(
             *hashTable,
             epochActionManager);
 
@@ -197,7 +174,7 @@ private:
 
 // Serializer is the main driver for serializing a hash table.
 // It always uses the Current::Serializer for serializing a hash table.
-template <typename HashTable>
+template <typename HashTable, template <typename> class ReadOnlyHashTable>
 class Serializer
 {
 public:
@@ -207,12 +184,12 @@ public:
 
     void Serialize(HashTable& hashTable, std::ostream& stream) const
     {
-        Current::Serializer<HashTable>{}.Serialize(hashTable, stream);
+        Current::Serializer<HashTable, ReadOnlyHashTable>{}.Serialize(hashTable, stream);
     }
 };
 
 // Deserializer is the main driver for deserializing the input stream to create a hash table.
-template <typename Memory, typename HashTable>
+template <typename Memory, typename HashTable, template <typename> class WritableHashTable>
 class Deserializer
 {
 public:
@@ -233,7 +210,7 @@ public:
         switch (version)
         {
         case Current::c_version:
-            return Current::Deserializer<Memory, HashTable>{ m_properties }.Deserialize(memory, stream);
+            return Current::Deserializer<Memory, HashTable, WritableHashTable>{ m_properties }.Deserialize(memory, stream);
         default:
             boost::format err("Unsupported version '%1%' is given.");
             err % version;
