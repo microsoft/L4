@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <vector>
 #include "L4/Log/PerfCounter.h"
 #include "L4/Utils/Exception.h"
 
@@ -75,7 +76,7 @@ T ConvertFromString(const char* str)
 {
     return T(
         reinterpret_cast<const std::uint8_t*>(str),
-        static_cast<T::size_type>(strlen(str)));
+        static_cast<typename T::size_type>(strlen(str)));
 }
 
 template <typename T>
@@ -87,7 +88,11 @@ std::string ConvertToString(const T& t)
 
 // Counter related validation util function.
 
-using ExpectedCounterValues = std::vector<std::pair<HashTablePerfCounter, PerfCounters<HashTablePerfCounter>::TValue>>;
+using ExpectedCounterValues
+    = std::vector<
+        std::pair<
+            HashTablePerfCounter,
+            typename PerfCounters<HashTablePerfCounter>::TValue>>;
 
 // Validate the given perfData against the expected counter value.
 void ValidateCounter(

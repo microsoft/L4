@@ -3,8 +3,11 @@
 #include <cctype>
 #include <cstdint>
 #include <string>
-#include <boost\functional\hash.hpp>
+#include <boost/functional/hash.hpp>
 
+#if defined(__GNUC__)
+#define _stricmp strcasecmp
+#endif
 
 namespace L4
 {

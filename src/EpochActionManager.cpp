@@ -2,6 +2,7 @@
 #include "Utils/Math.h"
 
 #include <cassert>
+#include <memory>
 #include <thread>
 
 namespace L4

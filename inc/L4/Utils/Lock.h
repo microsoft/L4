@@ -1,6 +1,16 @@
 #pragma once
 
+#if defined(_MSC_VER)
+
 #include "Utils/Windows.h"
+
+#else
+#if defined(__GNUC__)
+
+#include <pthread.h>
+
+#endif
+#endif
 
 
 namespace L4
@@ -8,6 +18,7 @@ namespace L4
 namespace Utils
 {
 
+#if defined(_MSC_VER)
 
 // Represents a RAII wrapper for Win32 CRITICAL_SECTION.
 class CriticalSection : protected ::CRITICAL_SECTION
@@ -83,6 +94,68 @@ private:
     ::SRWLOCK m_lock;
 };
 
+#else
+#if defined(__GNUC__)
+
+class CriticalSection
+{
+public:
+    CriticalSection()
+    : m_mutex{}
+    {}
+
+    CriticalSection(const CriticalSection& other) = delete;
+    CriticalSection& operator=(const CriticalSection& other) = delete;
+
+    ~CriticalSection() = default;
+
+    void lock()
+    {
+        pthread_mutex_lock(&m_mutex);
+    }
+
+    void unlock()
+    {
+        pthread_mutex_unlock(&m_mutex);
+    }
+
+private:
+    pthread_mutex_t m_mutex;
+};
+
+class ReaderWriterLockSlim
+{
+public:
+    ReaderWriterLockSlim() = default;
+    ReaderWriterLockSlim(const ReaderWriterLockSlim& other) = delete;
+    ReaderWriterLockSlim& operator=(const ReaderWriterLockSlim& other) = delete;
+
+    void lock_shared()
+    {
+        pthread_rwlock_rdlock(&m_lock);
+    }
+
+    void lock()
+    {
+        pthread_rwlock_wrlock(&m_lock);
+    }
+
+    void unlock_shared()
+    {
+        pthread_rwlock_unlock(&m_lock);
+    }
+
+    void unlock()
+    {
+        unlock_shared();
+    }
+
+private:
+    pthread_rwlock_t m_lock = PTHREAD_RWLOCK_INITIALIZER;
+};
+
+#endif
+#endif
 
 } // namespace Utils
 } // namespace L4

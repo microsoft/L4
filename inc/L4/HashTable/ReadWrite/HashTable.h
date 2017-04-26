@@ -262,10 +262,13 @@ class WritableHashTable
     , public IWritableHashTable
 {
 public:
+    using Base = ReadOnlyHashTable<Allocator>;
+    using HashTable = typename Base::HashTable;
+
     WritableHashTable(
         HashTable& hashTable,
         IEpochActionManager& epochManager)
-        : ReadOnlyHashTable(hashTable)
+        : Base(hashTable)
         , m_epochManager{ epochManager }
     {}
 
@@ -276,11 +279,11 @@ public:
 
     virtual bool Remove(const Key& key) override
     {
-        const auto bucketInfo = GetBucketInfo(key);
+        const auto bucketInfo = this->GetBucketInfo(key);
 
-        auto* entry = &m_hashTable.m_buckets[bucketInfo.first];
+        auto* entry = &(this->m_hashTable.m_buckets[bucketInfo.first]);
 
-        HashTable::Lock lock{ m_hashTable.GetMutex(bucketInfo.first) };
+        typename HashTable::Lock lock{ this->m_hashTable.GetMutex(bucketInfo.first) };
 
         // Note that similar to Add(), the following block is performed inside a critical section,
         // therefore, it is safe to do "Load"s with memory_order_relaxed.
@@ -294,7 +297,7 @@ public:
 
                     if (data != nullptr)
                     {
-                        const auto record = m_recordSerializer.Deserialize(*data);
+                        const auto record = this->m_recordSerializer.Deserialize(*data);
                         if (record.m_key == key)
                         {
                             Remove(*entry, i);
@@ -312,7 +315,7 @@ public:
 
     virtual ISerializerPtr GetSerializer() const override
     {
-        return std::make_unique<WritableHashTable::Serializer>(m_hashTable);
+        return std::make_unique<WritableHashTable::Serializer>(this->m_hashTable);
     }
 
 protected:
@@ -320,20 +323,20 @@ protected:
     {
         assert(recordToAdd != nullptr);
 
-        const auto newRecord = m_recordSerializer.Deserialize(*recordToAdd);
+        const auto newRecord = this->m_recordSerializer.Deserialize(*recordToAdd);
         const auto& newKey = newRecord.m_key;
         const auto& newValue = newRecord.m_value;
 
         Stat stat{ newKey.m_size, newValue.m_size };
 
-        const auto bucketInfo = GetBucketInfo(newKey);
+        const auto bucketInfo = this->GetBucketInfo(newKey);
 
-        auto* curEntry = &m_hashTable.m_buckets[bucketInfo.first];
+        auto* curEntry = &(this->m_hashTable.m_buckets[bucketInfo.first]);
 
-        HashTable::Entry* entryToUpdate = nullptr;
+        typename HashTable::Entry* entryToUpdate = nullptr;
         std::uint8_t curDataIndex = 0U;
 
-        HashTable::UniqueLock lock{ m_hashTable.GetMutex(bucketInfo.first) };
+        typename HashTable::UniqueLock lock{ this->m_hashTable.GetMutex(bucketInfo.first) };
 
         // Note that the following block is performed inside a critical section, therefore,
         // it is safe to do "Load"s with memory_order_relaxed.
@@ -357,7 +360,7 @@ protected:
                 }
                 else if (curEntry->m_tags[i] == bucketInfo.second)
                 {
-                    const auto oldRecord = m_recordSerializer.Deserialize(*data);
+                    const auto oldRecord = this->m_recordSerializer.Deserialize(*data);
                     if (newKey == oldRecord.m_key)
                     {
                         // Will overwrite this entry data.
@@ -381,7 +384,7 @@ protected:
             {
                 curEntry->m_next.Store(
                     new (Detail::to_raw_pointer(
-                        m_hashTable.GetAllocator<HashTable::Entry>().allocate(1U)))
+                        this->m_hashTable.template GetAllocator<typename HashTable::Entry>().allocate(1U)))
                     HashTable::Entry(),
                     std::memory_order_release);
 
@@ -410,7 +413,7 @@ protected:
 
         assert(recordToDelete != nullptr);
 
-        const auto record = m_recordSerializer.Deserialize(*recordToDelete);
+        const auto record = this->m_recordSerializer.Deserialize(*recordToDelete);
 
         UpdatePerfDataForRemove(
             Stat{
@@ -429,14 +432,18 @@ private:
 
     RecordBuffer* CreateRecordBuffer(const Key& key, const Value& value)
     {
-        const auto bufferSize = m_recordSerializer.CalculateBufferSize(key, value);
+        const auto bufferSize = this->m_recordSerializer.CalculateBufferSize(key, value);
         auto buffer = Detail::to_raw_pointer(
-            m_hashTable.GetAllocator<std::uint8_t>().allocate(bufferSize));
+            this->m_hashTable.template GetAllocator<std::uint8_t>().allocate(bufferSize));
             
-        return m_recordSerializer.Serialize(key, value, buffer, bufferSize);
+        return this->m_recordSerializer.Serialize(key, value, buffer, bufferSize);
     }
 
-    RecordBuffer* UpdateRecord(typename HashTable::Entry& entry, std::uint8_t index, RecordBuffer* newRecord, std::uint8_t newTag)
+    RecordBuffer* UpdateRecord(
+        typename HashTable::Entry& entry,
+        std::uint8_t index,
+        RecordBuffer* newRecord,
+        std::uint8_t newTag)
     {
         // This function should be called under a lock, so calling with memory_order_relaxed for Load() is safe.
         auto& recordHolder = entry.m_dataList[index];
@@ -459,13 +466,13 @@ private:
             [this, record]()
         {
             record->~RecordBuffer();
-            m_hashTable.GetAllocator<RecordBuffer>().deallocate(record, 1U);
+            this->m_hashTable.template GetAllocator<RecordBuffer>().deallocate(record, 1U);
         });
     }
 
     void UpdatePerfDataForAdd(const Stat& stat)
     {
-        auto& perfData = m_hashTable.m_perfData;
+        auto& perfData = this->m_hashTable.m_perfData;
 
         if (stat.m_oldValueSize != 0U)
         {
@@ -480,9 +487,9 @@ private:
             perfData.Add(HashTablePerfCounter::TotalValueSize, stat.m_valueSize);
             perfData.Add(HashTablePerfCounter::TotalIndexSize,
                 // Record overhead.
-                m_recordSerializer.CalculateRecordOverhead()
+                this->m_recordSerializer.CalculateRecordOverhead()
                 // Entry overhead if created.
-                + (stat.m_isNewEntryAdded ? sizeof(HashTable::Entry) : 0U));
+                + (stat.m_isNewEntryAdded ? sizeof(typename HashTable::Entry) : 0U));
 
             perfData.Min(HashTablePerfCounter::MinKeySize, stat.m_keySize);
             perfData.Max(HashTablePerfCounter::MaxKeySize, stat.m_keySize);
@@ -506,12 +513,12 @@ private:
 
     void UpdatePerfDataForRemove(const Stat& stat)
     {
-        auto& perfData = m_hashTable.m_perfData;
+        auto& perfData = this->m_hashTable.m_perfData;
 
         perfData.Decrement(HashTablePerfCounter::RecordsCount);
         perfData.Subtract(HashTablePerfCounter::TotalKeySize, stat.m_keySize);
         perfData.Subtract(HashTablePerfCounter::TotalValueSize, stat.m_valueSize);
-        perfData.Subtract(HashTablePerfCounter::TotalIndexSize, m_recordSerializer.CalculateRecordOverhead());
+        perfData.Subtract(HashTablePerfCounter::TotalIndexSize, this->m_recordSerializer.CalculateRecordOverhead());
     }
 
     IEpochActionManager& m_epochManager;

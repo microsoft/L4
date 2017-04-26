@@ -40,11 +40,19 @@ public:
 
     void Store(T* ptr, std::memory_order memoryOrder = std::memory_order_seq_cst)
     {
+#if defined(_MSC_VER)
         m_offset.store(boost::interprocess::ipcdetail::offset_ptr_to_offset(ptr, this), memoryOrder);
+#else
+        m_offset.store(boost::interprocess::ipcdetail::offset_ptr_to_offset<std::uintptr_t>(ptr, this), memoryOrder);
+#endif
     }
 
 private:
+#if defined(_MSC_VER)
     std::atomic_uint64_t m_offset;
+#else
+    std::atomic<std::uint64_t> m_offset;
+#endif
 };
 
 
