@@ -48,7 +48,7 @@ add_executable(L4.UnitTests
     Unittests/SettingAdapterTest.cpp
     Unittests/Utils.cpp
     Unittests/UtilsTest.cpp
-    Unittests/stdafx.cpp)
+    Unittests/Main.cpp)
 
 target_link_libraries(L4.UnitTests
     L4
