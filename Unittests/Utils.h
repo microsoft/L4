@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <string.h>
 #include <vector>
 #include "L4/Log/PerfCounter.h"
 #include "L4/Utils/Exception.h"

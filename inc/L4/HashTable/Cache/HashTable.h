@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdint>
 #include <mutex>
+#include <stdexcept>
 #include "detail/ToRawPointer.h"
 #include "Epoch/IEpochActionManager.h"
 #include "HashTable/IHashTable.h"
@@ -28,17 +29,21 @@ public:
     using Base = ReadWrite::ReadOnlyHashTable<Allocator>;
     using HashTable = typename Base::HashTable;
 
+    using Key = typename Base::Key;
+    using Value = typename Base::Value;
+    using IIteratorPtr = typename Base::IIteratorPtr;
+
     class Iterator;
 
     ReadOnlyHashTable(
         HashTable& hashTable,
         std::chrono::seconds recordTimeToLive)
-        : Base{
+        : Base(
             hashTable,
             RecordSerializer{
                 hashTable.m_setting.m_fixedKeySize,
                 hashTable.m_setting.m_fixedValueSize,
-                Metadata::c_metaDataSize } }
+                Metadata::c_metaDataSize })
         , m_recordTimeToLive{ recordTimeToLive }
     {}
 
@@ -47,7 +52,7 @@ public:
         const auto status = GetInternal(key, value);
 
         // Note that the following const_cast is safe and necessary to update cache hit information.
-        const_cast<HashTablePerfData&>(GetPerfData()).Increment(
+        const_cast<HashTablePerfData&>(this->GetPerfData()).Increment(
             status
             ? HashTablePerfCounter::CacheHitCount
             : HashTablePerfCounter::CacheMissCount);
@@ -58,10 +63,10 @@ public:
     virtual IIteratorPtr GetIterator() const override
     {
         return std::make_unique<Iterator>(
-            m_hashTable,
-            m_recordSerializer,
+            this->m_hashTable,
+            this->m_recordSerializer,
             m_recordTimeToLive,
-            GetCurrentEpochTime());
+            this->GetCurrentEpochTime());
     }
 
     ReadOnlyHashTable(const ReadOnlyHashTable&) = delete;
@@ -80,7 +85,7 @@ protected:
         // If the record with the given key is found, check if the record is expired or not.
         // Note that the following const_cast is safe and necessary to update the access status.
         Metadata metaData{ const_cast<std::uint32_t*>(reinterpret_cast<const std::uint32_t*>(value.m_data)) };
-        if (metaData.IsExpired(GetCurrentEpochTime(), m_recordTimeToLive))
+        if (metaData.IsExpired(this->GetCurrentEpochTime(), m_recordTimeToLive))
         {
             return false;
         }
@@ -101,27 +106,27 @@ template <typename Allocator, typename Clock>
 class ReadOnlyHashTable<Allocator, Clock>::Iterator : public Base::Iterator
 {
 public:
-    using Base = typename Base::Iterator;
+    using BaseIterator = typename Base::Iterator;
 
     Iterator(
         const HashTable& hashTable,
         const RecordSerializer& recordDeserializer,
         std::chrono::seconds recordTimeToLive,
         std::chrono::seconds currentEpochTime)
-        : Base(hashTable, recordDeserializer)
+        : BaseIterator(hashTable, recordDeserializer)
         , m_recordTimeToLive{ recordTimeToLive }
         , m_currentEpochTime{ currentEpochTime }
     {}
 
     Iterator(Iterator&& other)
-        : Base(std::move(other))
+        : BaseIterator(std::move(other))
         , m_recordTimeToLive{ std::move(other.m_recordTimeToLive) }
         , m_currentEpochTime{ std::move(other.m_currentEpochTime) }
     {}
 
     bool MoveNext() override
     {
-        if (!Base::MoveNext())
+        if (!BaseIterator::MoveNext())
         {
             return false;
         }
@@ -131,20 +136,20 @@ public:
             const Metadata metaData{
                 const_cast<std::uint32_t*>(
                     reinterpret_cast<const std::uint32_t*>(
-                        Base::GetValue().m_data)) };
+                        BaseIterator::GetValue().m_data)) };
 
             if (!metaData.IsExpired(m_currentEpochTime, m_recordTimeToLive))
             {
                 return true;
             }
-        } while (Base::MoveNext());
+        } while (BaseIterator::MoveNext());
 
         return false;
     }
 
     Value GetValue() const override
     {
-        auto value = Base::GetValue();
+        auto value = BaseIterator::GetValue();
         value.m_data += Metadata::c_metaDataSize;
         value.m_size -= Metadata::c_metaDataSize;
 
@@ -173,6 +178,10 @@ public:
     using ReadOnlyBase = ReadOnlyHashTable<Allocator, Clock>;
     using WritableBase = typename ReadWrite::WritableHashTable<Allocator>;
     using HashTable = typename ReadOnlyBase::HashTable;
+
+    using Key = typename ReadOnlyBase::Key;
+    using Value = typename ReadOnlyBase::Value;
+    using ISerializerPtr = typename WritableBase::ISerializerPtr;
 
     WritableHashTable(
         HashTable& hashTable,
@@ -210,7 +219,7 @@ public:
 
     virtual ISerializerPtr GetSerializer() const override
     {
-        throw std::exception("Not implemented yet.");
+        throw std::runtime_error("Not implemented yet.");
     }
 
 private:
@@ -219,13 +228,13 @@ private:
 
     void EvictBasedOnTime(const Key& key)
     {
-        const auto bucketIndex = GetBucketInfo(key).first;
+        const auto bucketIndex = this->GetBucketInfo(key).first;
 
-        auto* entry = &m_hashTable.m_buckets[bucketIndex];
+        auto* entry = &(this->m_hashTable.m_buckets[bucketIndex]);
 
-        const auto curEpochTime = GetCurrentEpochTime();
+        const auto curEpochTime = this->GetCurrentEpochTime();
 
-        HashTable::Lock lock{ m_hashTable.GetMutex(bucketIndex) };
+        typename HashTable::Lock lock{ this->m_hashTable.GetMutex(bucketIndex) };
 
         while (entry != nullptr)
         {
@@ -238,12 +247,12 @@ private:
                     const Metadata metadata{
                         const_cast<std::uint32_t*>(
                             reinterpret_cast<const std::uint32_t*>(
-                                m_recordSerializer.Deserialize(*data).m_value.m_data)) };
+                                this->m_recordSerializer.Deserialize(*data).m_value.m_data)) };
 
-                    if (metadata.IsExpired(curEpochTime, m_recordTimeToLive))
+                    if (metadata.IsExpired(curEpochTime, this->m_recordTimeToLive))
                     {
                         WritableBase::Remove(*entry, i);
-                        m_hashTable.m_perfData.Increment(HashTablePerfCounter::EvictedRecordsCount);
+                        this->m_hashTable.m_perfData.Increment(HashTablePerfCounter::EvictedRecordsCount);
                     }
                 }
             }
@@ -272,12 +281,12 @@ private:
             return;
         }
 
-        const auto curEpochTime = GetCurrentEpochTime();
+        const auto curEpochTime = this->GetCurrentEpochTime();
 
         // The max number of iterations we are going through per eviction is twice the number
         // of buckets so that it can clear the access status. Note that this is the worst
         // case scenario and the eviction process should exit much quicker in a normal case.
-        auto& buckets = m_hashTable.m_buckets;
+        auto& buckets = this->m_hashTable.m_buckets;
         std::uint64_t numIterationsRemaining = buckets.size() * 2U;
         
         while (numBytesToFree > 0U && numIterationsRemaining-- > 0U)
@@ -287,8 +296,8 @@ private:
 
             // Lock the bucket since another thread can bypass Evict() since TotalDataSize can
             // be updated before the lock on m_evictMutex is released.
-            HashTable::UniqueLock lock{ m_hashTable.GetMutex(currentBucketIndex) };
-            HashTable::Entry* entry = &bucket;
+            typename HashTable::UniqueLock lock{ this->m_hashTable.GetMutex(currentBucketIndex) };
+            typename HashTable::Entry* entry = &bucket;
         
             while (entry != nullptr)
             {
@@ -298,7 +307,7 @@ private:
 
                     if (data != nullptr)
                     {
-                        const auto record = m_recordSerializer.Deserialize(*data);
+                        const auto record = this->m_recordSerializer.Deserialize(*data);
                         const auto& value = record.m_value;
 
                         Metadata metadata{
@@ -309,7 +318,7 @@ private:
                         // Evict this record if
                         // 1: the record is expired, or
                         // 2: the entry is not recently accessed (and unset the access bit if set).
-                        if (metadata.IsExpired(curEpochTime, m_recordTimeToLive)
+                        if (metadata.IsExpired(curEpochTime, this->m_recordTimeToLive)
                             || !metadata.UpdateAccessStatus(false))
                         {
                             const auto numBytesFreed = record.m_key.m_size + value.m_size;
@@ -317,7 +326,7 @@ private:
 
                             WritableBase::Remove(*entry, i);
 
-                            m_hashTable.m_perfData.Increment(HashTablePerfCounter::EvictedRecordsCount);
+                            this->m_hashTable.m_perfData.Increment(HashTablePerfCounter::EvictedRecordsCount);
                         }
                     }
                 }
@@ -357,15 +366,15 @@ private:
 
     RecordBuffer* CreateRecordBuffer(const Key& key, const Value& value)
     {
-        const auto bufferSize = m_recordSerializer.CalculateBufferSize(key, value);
+        const auto bufferSize = this->m_recordSerializer.CalculateBufferSize(key, value);
         auto buffer = Detail::to_raw_pointer(
-            m_hashTable.GetAllocator<std::uint8_t>().allocate(bufferSize));
+            this->m_hashTable.template GetAllocator<std::uint8_t>().allocate(bufferSize));
 
         std::uint32_t metaDataBuffer;
-        Metadata{ &metaDataBuffer, GetCurrentEpochTime() };
+        Metadata{ &metaDataBuffer, this->GetCurrentEpochTime() };
 
         // 4-byte Metadata is inserted between key and value buffer.
-        return m_recordSerializer.Serialize(
+        return this->m_recordSerializer.Serialize(
             key,
             value,
             Value{ reinterpret_cast<std::uint8_t*>(&metaDataBuffer), sizeof(metaDataBuffer) },

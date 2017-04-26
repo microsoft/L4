@@ -1,13 +1,12 @@
-#include "stdafx.h"
+#include <boost/test/unit_test.hpp>
+#include <algorithm>
+#include <sstream>
 #include "Utils.h"
 #include "Mocks.h"
 #include "CheckedAllocator.h"
 #include "L4/HashTable/Common/Record.h"
 #include "L4/HashTable/Cache/Metadata.h"
 #include "L4/HashTable/Cache/HashTable.h"
-
-#include <algorithm>
-#include <sstream>
 
 namespace L4
 {

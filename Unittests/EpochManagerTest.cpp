@@ -1,11 +1,11 @@
-#include "stdafx.h"
+#include <atomic>
+#include <boost/test/unit_test.hpp>
 #include "Utils.h"
 #include "L4/Epoch/EpochQueue.h"
 #include "L4/Epoch/EpochActionManager.h"
 #include "L4/LocalMemory/EpochManager.h"
 #include "L4/Log/PerfCounter.h"
 #include "L4/Utils/Lock.h"
-#include <atomic>
 
 namespace L4
 {
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(EpochManagerTest)
         EpochManagerConfig(100000U, std::chrono::milliseconds(5U), 1U),
         perfData);
 
-    std::atomic<bool> isActionCalled = false;
+    std::atomic<bool> isActionCalled{ false };
     auto action = [&]() { isActionCalled = true; };
 
     auto epochCounterReferenced = epochManager.GetEpochRefManager().AddRef();

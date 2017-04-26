@@ -32,7 +32,7 @@ public:
         : m_frontIndex{ epochCounter }
         , m_backIndex{ epochCounter }
         , m_mutexForBackIndex{}
-        , m_refCounts{ queueSize, Allocator::rebind<RefCount>::other(allocator) }
+        , m_refCounts{ queueSize, typename Allocator::template rebind<RefCount>::other(allocator) }
     {
         if (queueSize == 0U)
         {
@@ -81,7 +81,7 @@ public:
     std::uint64_t AddRef()
     {
         // The synchronization is needed for EpochCounterManager::AddNewEpoch().
-        EpochQueue::SharableLock lock(m_epochQueue.m_mutexForBackIndex);
+        typename EpochQueue::SharableLock lock(m_epochQueue.m_mutexForBackIndex);
 
         ++m_epochQueue.m_refCounts[m_epochQueue.m_backIndex % m_epochQueue.m_refCounts.size()];
 
@@ -126,7 +126,7 @@ public:
     void AddNewEpoch()
     {
         // The synchronization is needed for EpochRefManager::AddRef().
-        EpochQueue::ExclusiveLock lock(m_epochQueue.m_mutexForBackIndex);
+        typename EpochQueue::ExclusiveLock lock(m_epochQueue.m_mutexForBackIndex);
 
         ++m_epochQueue.m_backIndex;
 

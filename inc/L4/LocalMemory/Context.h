@@ -9,18 +9,18 @@ namespace L4
 namespace LocalMemory
 {
 
-class Context : private EpochRefPolicy<EpochManager::EpochRefManager>
+class Context : private EpochRefPolicy<EpochManager::TheEpochRefManager>
 {
 public:
     Context(
         HashTableManager& hashTableManager,
-        EpochManager::EpochRefManager& epochRefManager)
-        : EpochRefPolicy<EpochManager::EpochRefManager>(epochRefManager)
+        EpochManager::TheEpochRefManager& epochRefManager)
+        : EpochRefPolicy<EpochManager::TheEpochRefManager>(epochRefManager)
         , m_hashTableManager{ hashTableManager }
     {}
 
     Context(Context&& context)
-        : EpochRefPolicy<EpochManager::EpochRefManager>(std::move(context))
+        : EpochRefPolicy<EpochManager::TheEpochRefManager>(std::move(context))
         , m_hashTableManager{ context.m_hashTableManager }
     {}
 

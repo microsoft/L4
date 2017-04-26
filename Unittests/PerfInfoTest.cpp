@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "L4/Log/PerfLogger.h"
+#include <boost/test/unit_test.hpp>
 #include <limits>
+#include "L4/Log/PerfLogger.h"
 
 namespace L4
 {

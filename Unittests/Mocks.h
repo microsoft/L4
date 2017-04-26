@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
 #include "L4/Epoch/IEpochActionManager.h"
 #include "L4/Log/PerfLogger.h"
 

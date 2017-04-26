@@ -40,7 +40,6 @@
     </Lib>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)Unittests;$(SolutionDir)inc;$(SolutionDir)inc/L4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalOptions>/Zm136 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
@@ -60,16 +59,13 @@
     <ClCompile Include="PerfInfoTest.cpp" />
     <ClCompile Include="ReadWriteHashTableTest.cpp" />
     <ClCompile Include="SettingAdapterTest.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="UtilsTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CheckedAllocator.h" />
     <ClInclude Include="Mocks.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
