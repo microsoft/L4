@@ -42,8 +42,8 @@ public:
 
         using namespace HashTable;
 
-        using InternalHashTable = ReadWrite::WritableHashTable<Allocator>::HashTable;
-        using Memory = LocalMemory::Memory<Allocator>;
+        using InternalHashTable = typename ReadWrite::WritableHashTable<Allocator>::HashTable;
+        using Memory = typename LocalMemory::Memory<Allocator>;
 
         Memory memory{ allocator };
 
@@ -53,8 +53,8 @@ public:
                 Deserialize(
                     memory,
                     *(serializerConfig->m_stream))
-            : memory.MakeUnique<InternalHashTable>(
-                InternalHashTable::Setting{
+            : memory.template MakeUnique<InternalHashTable>(
+                typename InternalHashTable::Setting{
                     config.m_setting.m_numBuckets,
                     (std::max)(config.m_setting.m_numBucketsPerMutex.get_value_or(1U), 1U),
                     config.m_setting.m_fixedKeySize.get_value_or(0U),

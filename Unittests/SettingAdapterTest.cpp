@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <boost/test/unit_test.hpp>
 #include "L4/HashTable/Common/SettingAdapter.h"
 #include "L4/HashTable/Common/Record.h"
 #include "CheckedAllocator.h"
