@@ -40,13 +40,15 @@
     </Lib>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)Unittests;$(SolutionDir)inc;$(SolutionDir)inc/L4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalOptions>/Zm136 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
       <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IntrinsicFunctions>
       <DisableSpecificWarnings>4482;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -60,8 +62,13 @@
     <ClCompile Include="PerfInfoTest.cpp" />
     <ClCompile Include="ReadWriteHashTableTest.cpp" />
     <ClCompile Include="SettingAdapterTest.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="Main.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="UtilsTest.cpp" />
@@ -69,7 +76,6 @@
   <ItemGroup>
     <ClInclude Include="CheckedAllocator.h" />
     <ClInclude Include="Mocks.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

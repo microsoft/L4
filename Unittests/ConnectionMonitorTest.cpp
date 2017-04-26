@@ -1,9 +1,9 @@
-#include "stdafx.h"
+#include <boost/test/unit_test.hpp>
+#include <mutex>
+#include <condition_variable>
 #include "Utils.h"
 #include "L4/Interprocess/Connection/ConnectionMonitor.h"
 #include "L4/Interprocess/Connection/EndPointInfoUtils.h"
-#include <mutex>
-#include <condition_variable>
 
 namespace L4
 {
