@@ -385,7 +385,7 @@ protected:
                 curEntry->m_next.Store(
                     new (Detail::to_raw_pointer(
                         this->m_hashTable.template GetAllocator<typename HashTable::Entry>().allocate(1U)))
-                    typename HashTable::Entry(),
+                    HashTable::Entry(),
                     std::memory_order_release);
 
                 stat.m_isNewEntryAdded = true;

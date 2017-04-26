@@ -1,13 +1,13 @@
-#include <boost/test/unit_test.hpp>
-#include <string>
-#include <sstream>
-#include <vector>
+#include "stdafx.h"
 #include "Utils.h"
 #include "Mocks.h"
 #include "L4/HashTable/ReadWrite/HashTable.h"
 #include "L4/HashTable/ReadWrite/Serializer.h"
 #include "L4/Log/PerfCounter.h"
 #include "L4/LocalMemory/Memory.h"
+#include <string>
+#include <sstream>
+#include <vector>
 
 namespace L4
 {

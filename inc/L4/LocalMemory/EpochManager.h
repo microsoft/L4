@@ -20,11 +20,11 @@ namespace LocalMemory
 class EpochManager : public IEpochActionManager
 {
 public:
-    using TheEpochQueue = EpochQueue<
+    using EpochQueue = EpochQueue<
         boost::shared_lock_guard<Utils::ReaderWriterLockSlim>,
         std::lock_guard<Utils::ReaderWriterLockSlim>>;
 
-    using TheEpochRefManager = EpochRefManager<TheEpochQueue>;
+    using EpochRefManager = EpochRefManager<EpochQueue>;
 
     EpochManager(
         const EpochManagerConfig& config,
@@ -47,7 +47,7 @@ public:
             }}
     {}
 
-    TheEpochRefManager& GetEpochRefManager()
+    EpochRefManager& GetEpochRefManager()
     {
         return m_epochRefManager;
     }
@@ -62,7 +62,7 @@ public:
     EpochManager& operator=(const EpochManager&) = delete;
 
 private:
-    using TheEpochCounterManager = EpochCounterManager<TheEpochQueue>;
+    using EpochCounterManager = EpochCounterManager<EpochQueue>;
 
     using ProcessingThread = Utils::RunningThread<std::function<void()>>;
 
@@ -100,20 +100,16 @@ private:
     EpochManagerConfig m_config;
 
     // The global current epoch counter.
-#if defined(_MSC_VER)
     std::atomic_uint64_t m_currentEpochCounter;
-#else
-    std::atomic<std::uint64_t> m_currentEpochCounter;
-#endif
 
     // Epoch queue.
-    TheEpochQueue m_epochQueue;
+    EpochQueue m_epochQueue;
 
     // Handles adding/decrementing ref counts.
-    TheEpochRefManager m_epochRefManager;
+    EpochRefManager m_epochRefManager;
 
     // Handles adding new epoch and finding the epoch counts that have zero ref counts.
-    TheEpochCounterManager m_epochCounterManager;
+    EpochCounterManager m_epochCounterManager;
 
     // Handles registering/performing actions.
     EpochActionManager m_epochActionManager;

@@ -103,10 +103,10 @@ public:
     {
         DeserializerHelper helper(stream);
 
-        typename HashTable::Setting setting;
+        HashTable::Setting setting;
         helper.Deserialize(setting);
 
-        auto hashTable{ memory.template MakeUnique<HashTable>(
+        auto hashTable{ memory.MakeUnique<HashTable>(
             setting,
             memory.GetAllocator()) };
 

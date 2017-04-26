@@ -1,6 +1,6 @@
-#include <boost/test/unit_test.hpp>
-#include <array>
+#include "stdafx.h"
 #include "L4/Utils/Math.h"
+#include <array>
 
 namespace L4
 {

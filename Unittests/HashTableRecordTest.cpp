@@ -1,9 +1,9 @@
-#include <boost/test/unit_test.hpp>
+#include "stdafx.h"
+#include "L4/HashTable/Common/Record.h"
+#include "Utils.h"
 #include <boost/optional.hpp>
 #include <string>
 #include <vector>
-#include "L4/HashTable/Common/Record.h"
-#include "Utils.h"
 
 namespace L4
 {
@@ -30,7 +30,7 @@ protected:
 
         Validate(
             RecordSerializer{
-                isFixedKey ? static_cast<RecordSerializer::KeySize>(key.size()) : std::uint16_t(0),
+                isFixedKey ? static_cast<RecordSerializer::KeySize>(key.size()) : 0U,
                 isFixedValue ? static_cast<RecordSerializer::ValueSize>(value.size()) : 0U,
                 useMetaValue ? static_cast<RecordSerializer::ValueSize>(metaValue.size()) : 0U },
             key,

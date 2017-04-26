@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include "stdafx.h"
 #include "Utils.h"
 #include "Mocks.h"
 #include "L4/HashTable/Config.h"
