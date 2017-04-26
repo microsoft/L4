@@ -8,12 +8,18 @@ L4 HashTable supports caching based on memory size and time. It uses [Clock](htt
 L4 HashTable is built with interprocess communication in mind and its shared memory implementation (multiple-readers-single-writer model at process level) is coming soon.
 
 ## Installation
+### Visual C++ (Windows)
 This library is developed and maintained with Visual Studio 2017. Visual Studio 2017 Community is available for free [here](https://dev.windows.com/downloads).
 
 To get started, open the **L4.sln** file and build the solution. Initially, it will automatically start downloading [boost NuGet package](https://www.nuget.org/packages/boost/) before build starts.
 
-Support for other platforms is under consideration.
-
+### GCC
+This library is tested with GCC 6.2. You can run the following commands to get started:
+```
+cmake -DBOOST_ROOT=<boost root directory> CMakeLists.txt
+make
+make test
+```
 ## Getting Started
 Start with a simple [example](https://github.com/Microsoft/L4/blob/master/Examples/main.cpp).
 
