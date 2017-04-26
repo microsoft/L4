@@ -26,6 +26,7 @@ class ReadOnlyHashTable
 {
 public:
     using Base = ReadWrite::ReadOnlyHashTable<Allocator>;
+    using HashTable = typename Base::HashTable;
 
     class Iterator;
 
@@ -171,6 +172,7 @@ class WritableHashTable
 public:
     using ReadOnlyBase = ReadOnlyHashTable<Allocator, Clock>;
     using WritableBase = typename ReadWrite::WritableHashTable<Allocator>;
+    using HashTable = typename ReadOnlyBase::HashTable;
 
     WritableHashTable(
         HashTable& hashTable,

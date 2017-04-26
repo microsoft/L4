@@ -76,7 +76,7 @@ struct SharedHashTable
                 if (dataToDelete != nullptr)
                 {
                     dataToDelete->~Data();
-                    Allocator::rebind<Data>::other(allocator).deallocate(dataToDelete, 1U);
+                    typename Allocator::template rebind<Data>::other(allocator).deallocate(dataToDelete, 1U);
                 }
             };
         
@@ -98,7 +98,7 @@ struct SharedHashTable
         
                 // Clean the current entry itself.
                 entryToDelete->~Entry();
-                Allocator::rebind<Entry>::other(allocator).deallocate(entryToDelete, 1U);
+                typename Allocator::template rebind<Entry>::other(allocator).deallocate(entryToDelete, 1U);
             }
         
             // Delete all the data from the head of chained entries.
@@ -143,15 +143,15 @@ struct SharedHashTable
         ValueSize m_fixedValueSize = 0U;
     };
 
-    SharedHashTable::SharedHashTable(
+    SharedHashTable(
         const Setting& setting,
         Allocator allocator)
         : m_allocator{ allocator }
         , m_setting{ setting }
-        , m_buckets{ setting.m_numBuckets, Allocator::rebind<Entry>::other(m_allocator) }
+        , m_buckets{ setting.m_numBuckets, typename Allocator::template rebind<Entry>::other(m_allocator) }
         , m_mutexes{
             (std::max)(setting.m_numBuckets / (std::max)(setting.m_numBucketsPerMutex, 1U), 1U),
-            Allocator::rebind<Mutex>::other(m_allocator) }
+            typename Allocator::template rebind<Mutex>::other(m_allocator) }
         , m_perfData{}
     {
         m_perfData.Set(HashTablePerfCounter::BucketsCount, m_buckets.size());
@@ -162,7 +162,7 @@ struct SharedHashTable
             + sizeof(SharedHashTable));
     }
 
-    SharedHashTable::~SharedHashTable()
+    ~SharedHashTable()
     {
         for (auto& bucket : m_buckets)
         {
@@ -180,7 +180,7 @@ struct SharedHashTable
     template <typename T>
     auto GetAllocator() const
     {
-        return Allocator::rebind<T>::other(m_allocator);
+        return typename Allocator::template rebind<T>::other(m_allocator);
     }
 
     Mutex& GetMutex(std::size_t index)

@@ -22,6 +22,7 @@ class CheckedAllocator : public std::allocator<T>
 {
 public:
     using Base = std::allocator<T>;
+    using pointer = typename Base::pointer;
 
     template<class U>
     struct rebind

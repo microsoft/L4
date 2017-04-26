@@ -192,7 +192,14 @@ public:
     }
 
 private:
+#if defined(_MSC_VER)
     __declspec(align(8)) TCounter m_counters[TCounterEnum::Count];
+#else
+#if defined(__GNUC__)
+    TCounter m_counters[static_cast<size_t>(TCounterEnum::Count)]
+        __attribute__((aligned(8)));
+#endif
+#endif
 };
 
 typedef PerfCounters<ServerPerfCounter> ServerPerfData;
