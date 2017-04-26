@@ -6,50 +6,50 @@
 
 namespace L4
 {
-namespace LocalMemory
-{
-
-class Context : private EpochRefPolicy<EpochManager::EpochRefManager>
-{
-public:
-    Context(
-        HashTableManager& hashTableManager,
-        EpochManager::EpochRefManager& epochRefManager)
-        : EpochRefPolicy<EpochManager::EpochRefManager>(epochRefManager)
-        , m_hashTableManager{ hashTableManager }
-    {}
-
-    Context(Context&& context)
-        : EpochRefPolicy<EpochManager::EpochRefManager>(std::move(context))
-        , m_hashTableManager{ context.m_hashTableManager }
-    {}
-
-    const IReadOnlyHashTable& operator[](const char* name) const
+    namespace LocalMemory
     {
-        return m_hashTableManager.GetHashTable(name);
-    }
 
-    IWritableHashTable& operator[](const char* name)
-    {
-        return m_hashTableManager.GetHashTable(name);
-    }
+        class Context : private EpochRefPolicy<EpochManager::TheEpochRefManager>
+        {
+        public:
+            Context(
+                HashTableManager& hashTableManager,
+                EpochManager::TheEpochRefManager& epochRefManager)
+                : EpochRefPolicy<EpochManager::TheEpochRefManager>(epochRefManager)
+                , m_hashTableManager{ hashTableManager }
+            {}
 
-    const IReadOnlyHashTable& operator[](std::size_t index) const
-    {
-        return m_hashTableManager.GetHashTable(index);
-    }
+            Context(Context&& context)
+                : EpochRefPolicy<EpochManager::TheEpochRefManager>(std::move(context))
+                , m_hashTableManager{ context.m_hashTableManager }
+            {}
 
-    IWritableHashTable& operator[](std::size_t index)
-    {
-        return m_hashTableManager.GetHashTable(index);
-    }
+            const IReadOnlyHashTable& operator[](const char* name) const
+            {
+                return m_hashTableManager.GetHashTable(name);
+            }
 
-    Context(const Context&) = delete;
-    Context& operator=(const Context&) = delete;
+            IWritableHashTable& operator[](const char* name)
+            {
+                return m_hashTableManager.GetHashTable(name);
+            }
 
-private:
-    HashTableManager& m_hashTableManager;
-};
+            const IReadOnlyHashTable& operator[](std::size_t index) const
+            {
+                return m_hashTableManager.GetHashTable(index);
+            }
 
-} // namespace LocalMemory
+            IWritableHashTable& operator[](std::size_t index)
+            {
+                return m_hashTableManager.GetHashTable(index);
+            }
+
+            Context(const Context&) = delete;
+            Context& operator=(const Context&) = delete;
+
+        private:
+            HashTableManager& m_hashTableManager;
+        };
+
+    } // namespace LocalMemory
 } // namespace L4
