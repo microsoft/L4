@@ -1,9 +1,9 @@
-#include "stdafx.h"
+#include <boost/test/unit_test.hpp>
+#include <utility>
+#include <vector>
 #include "Mocks.h"
 #include "Utils.h"
 #include "L4/LocalMemory/HashTableService.h"
-#include <vector>
-#include <utility>
 
 namespace L4
 {

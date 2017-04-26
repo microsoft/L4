@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <boost/test/unit_test.hpp>
 #include "Utils.h"
 #include "Mocks.h"
 #include "CheckedAllocator.h"
