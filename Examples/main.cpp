@@ -41,7 +41,6 @@ void SimpleExample()
             val.m_data = reinterpret_cast<const std::uint8_t*>(valStr.c_str());
             val.m_size = valStr.size();
 
-
             hashTable.Add(key, val);
         }
     }
@@ -49,6 +48,9 @@ void SimpleExample()
     // Read data.
     {
         auto context = service.GetContext();
+
+        // Once a context is retrieved, the operations such as
+        // operator[] on the context and Get() are lock-free.
         auto& hashTable = context[hashTableIndex];
 
         for (const auto& keyValuePair : keyValuePairs)
