@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <stdexcept>
 
 namespace L4
