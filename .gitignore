@@ -67,3 +67,5 @@ ipch/
 *.vsp
 *.vspx
 *.sap
+*.htm
+*.user
