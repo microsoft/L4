@@ -1,22 +1,18 @@
 #pragma once
 
-#include <string>
 #include <stdexcept>
+#include <string>
 
-namespace L4
-{
+namespace L4 {
 
 // RuntimeException class used across L4 library.
-class RuntimeException : public std::runtime_error
-{
-public:
-    explicit RuntimeException(const std::string& message)
-        : std::runtime_error(message.c_str())
-    {}
+class RuntimeException : public std::runtime_error {
+ public:
+  explicit RuntimeException(const std::string& message)
+      : std::runtime_error(message.c_str()) {}
 
-    explicit RuntimeException(const char* message)
-        : std::runtime_error(message)
-    {}
+  explicit RuntimeException(const char* message)
+      : std::runtime_error(message) {}
 };
 
-} // namespace L4
+}  // namespace L4
