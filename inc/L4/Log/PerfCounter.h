@@ -176,7 +176,7 @@ typedef PerfCounters<ServerPerfCounter> ServerPerfData;
 struct HashTablePerfData : public PerfCounters<HashTablePerfCounter> {
   HashTablePerfData() {
     // Initialize any min counters to the max value.
-    const auto maxValue =
+    constexpr auto maxValue =
         (std::numeric_limits<HashTablePerfData::TValue>::max)();
 
     Set(HashTablePerfCounter::MinValueSize, maxValue);
