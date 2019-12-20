@@ -9,7 +9,7 @@ L4 HashTable is built with interprocess communication in mind and its shared mem
 
 ## Installation
 ### Visual C++ (Windows)
-This library is developed and maintained with Visual Studio 2017. Visual Studio 2017 Community is available for free [here](https://dev.windows.com/downloads).
+This library is developed and maintained with Visual Studio 2019. Visual Studio 2019 Community is available for free [here](https://visualstudio.microsoft.com/vs/community).
 
 To get started, open the **L4.sln** file and build the solution. Initially, it will automatically start downloading [boost NuGet package](https://www.nuget.org/packages/boost/) before build starts.
 
